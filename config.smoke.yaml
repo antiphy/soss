@@ -1,0 +1,41 @@
+# 冒烟测试用配置：小容量、小缓存，便于快速验证。
+storage:
+  root: ./data/smoke
+  data_file: data.bin
+  initial_size: 64MiB
+  expand_step: 32MiB
+  low_watermark: 16MiB
+  disk_safety_margin: 8MiB
+  fsync: true
+  verify_on_read: true
+
+cache:
+  hot_max_bytes: 8MiB
+  lru_max_bytes: 4MiB
+  lru_max_objects: 1000
+
+sqlite:
+  database: oss.db
+  busy_timeout: 5000
+  synchronous: FULL
+
+server:
+  listen: 127.0.0.1:18080
+  max_object_size: 8MiB
+  metrics_enabled: true
+
+logging:
+  level: info
+  lang: zh
+
+auth:
+  admin_token: "admin-token"
+  write_token: "write-token"
+  read_token: "read-token"
+  jwt_secret: "smoke-jwt-secret"
+  session_hour: 12
+
+admin:
+  enabled: true
+  views_dir: views
+  static_dir: static

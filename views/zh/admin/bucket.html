@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ bucket.Name }} · SOSS 管理后台{% endblock %}
+
+{% block body %}
+<nav class="crumb"><a href="/admin/buckets">存储桶</a> / <span>{{ bucket.Name }}</span></nav>
+
+<section class="card">
+  <h2>桶信息</h2>
+  <div class="meta-grid">
+    <div><span class="muted">名称</span><b>{{ bucket.Name }}</b></div>
+    <div><span class="muted">ID</span><b>{{ bucket.ID }}</b></div>
+    <div><span class="muted">类型</span><b>{{ bucket.Class|class_name }}</b></div>
+    <div><span class="muted">对象数</span><b>{{ bucket.ObjectCount }}</b></div>
+    <div><span class="muted">容量</span><b>{{ bucket.TotalBytes|size }}</b></div>
+    <div><span class="muted">创建时间</span><b>{{ bucket.CreateTS|datetime }}</b></div>
+  </div>
+  <div class="inline-form">
+    <select id="class-select">
+      <option value="2" {% if bucket.Class == 2 %}selected{% endif %}>NORMAL</option>
+      <option value="1" {% if bucket.Class == 1 %}selected{% endif %}>HOT</option>
+    </select>
+    <button class="btn" id="update-class">修改类型</button>
+    <button class="btn danger" id="delete-bucket">删除该桶</button>
+  </div>
+  <p class="hint">只能删除空桶；HOT 桶切换为 NORMAL 会清空该桶的内存缓存。</p>
+</section>
+
+<section class="card">
+  <h2>上传对象</h2>
+  <form id="upload-form" class="stack-form" enctype="multipart/form-data">
+    <label>Object key<input type="text" name="key" placeholder="photos/a.jpg" required></label>
+    <label>文件<input type="file" name="file" required></label>
+    <button class="btn primary" type="submit">上传</button>
+  </form>
+  <p class="hint">同一个 key 重复上传会生成新版本（version 递增），即“覆盖写”。</p>
+</section>
+
+<section class="card">
+  <h2>对象列表 <span class="muted">{{ objects.Total }}{% if objects.Truncated %}+（已截断）{% endif %}</span></h2>
+  <form id="filter-form" class="inline-form">
+    <input type="text" name="prefix" placeholder="按前缀过滤" value="{{ objects.Prefix }}">
+    <button class="btn" type="submit">过滤</button>
+    <a class="btn" href="/admin/buckets/{{ bucket.Name }}">重置</a>
+  </form>
+  {% if objects.Items %}
+  <table class="table">
+    <thead>
+      <tr><th>Object key</th><th>大小</th><th>类型</th><th>版本</th><th>更新时间</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+    {% for o in objects.Items %}
+      <tr>
+        <td class="key"><a href="/admin/buckets/{{ bucket.Name }}?prefix={{ o.ObjectKey|urlencode }}" title="按此前缀过滤">{{ o.ObjectKey }}</a></td>
+        <td>{{ o.Size|size }}</td>
+        <td>{{ o.ContentType }}</td>
+        <td>{{ o.Version }}</td>
+        <td>{{ o.CreatedAt|datetime }}</td>
+        <td class="actions">
+          <a class="btn small" href="/v1/buckets/{{ bucket.Name }}/objects/{{ o.ObjectKey|urlpath }}">下载</a>
+          <button class="btn small" data-versions="{{ o.ObjectKey }}">版本</button>
+          <button class="btn small danger" data-delete-object="{{ o.ObjectKey }}">删除</button>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">该桶下没有对象。</p>
+  {% endif %}
+</section>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h3 id="modal-title">版本列表</h3>
+    <div id="modal-body"></div>
+    <button class="btn" id="modal-close">关闭</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.SOSS_ADMIN = { page: "bucket", bucket: "{{ bucket.Name }}" };
+</script>
+{% endblock %}

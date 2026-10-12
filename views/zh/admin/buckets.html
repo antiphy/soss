@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}存储桶 · SOSS 管理后台{% endblock %}
+
+{% block body %}
+<section class="card">
+  <h2>新建存储桶</h2>
+  <form id="create-form" class="inline-form">
+    <input type="text" name="name" placeholder="桶名：3-63 位小写字母/数字/.-_" required>
+    <select name="class">
+      <option value="2">NORMAL</option>
+      <option value="1">HOT</option>
+    </select>
+    <button class="btn primary" type="submit">创建</button>
+  </form>
+  <p class="hint">桶名规则：小写字母、数字、<code>.</code>、<code>-</code>、<code>_</code>，长度 3~63，且以字母或数字开头。</p>
+</section>
+
+<section class="card">
+  <h2>存储桶列表 <span class="muted">{{ buckets|length }}</span></h2>
+  {% if buckets %}
+  <table class="table">
+    <thead>
+      <tr><th>名称</th><th>类型</th><th>对象数</th><th>容量</th><th>创建时间</th><th>更新时间</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+    {% for b in buckets %}
+      <tr>
+        <td><a href="/admin/buckets/{{ b.Name }}">{{ b.Name }}</a></td>
+        <td><span class="badge {% if b.Class == 1 %}badge-hot{% else %}badge-normal{% endif %}">{{ b.Class|class_name }}</span></td>
+        <td>{{ b.ObjectCount }}</td>
+        <td>{{ b.TotalBytes|size }}</td>
+        <td>{{ b.CreateTS|datetime }}</td>
+        <td>{{ b.UpdateTS|datetime }}</td>
+        <td class="actions">
+          <button class="btn small" data-toggle-class="{{ b.Name }}" data-class="{% if b.Class == 1 %}2{% else %}1{% endif %}">切换类型</button>
+          <button class="btn small danger" data-delete-bucket="{{ b.Name }}">删除</button>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">还没有存储桶，先在上面创建一个。</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.SOSS_ADMIN = { page: "buckets" };
+</script>
+{% endblock %}

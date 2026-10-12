@@ -1,0 +1,177 @@
+/* SOSS 管理后台样式：零依赖，够用就好。 */
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --border: #e3e6ea;
+  --text: #1f2329;
+  --muted: #8a9099;
+  --primary: #2f6feb;
+  --danger: #d93026;
+  --ok: #1a7f37;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 -apple-system, "Segoe UI", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+  height: 56px;
+  background: #1f2329;
+  color: #fff;
+}
+.topbar .brand { color: #fff; font-weight: 600; font-size: 15px; }
+.topbar .nav { display: flex; align-items: center; gap: 16px; flex: 1; }
+.topbar .nav a { color: #c9cdd4; }
+.topbar .nav a:hover { color: #fff; }
+.topbar .user { display: flex; align-items: center; gap: 12px; color: #c9cdd4; }
+.topbar .user .link { color: #c9cdd4; }
+
+/* ---------- 布局 ---------- */
+.container { max-width: 1100px; margin: 24px auto; padding: 0 24px; }
+.footer { text-align: center; color: var(--muted); padding: 32px 0; font-size: 12px; }
+.crumb { color: var(--muted); margin-bottom: 12px; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.card h2 { margin: 0 0 16px; font-size: 16px; font-weight: 600; }
+
+.muted { color: var(--muted); font-weight: 400; }
+.empty { color: var(--muted); margin: 8px 0 0; }
+.hint { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+code { background: #f0f2f5; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+/* ---------- 表单 ---------- */
+.inline-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.stack-form { display: flex; flex-direction: column; gap: 12px; max-width: 520px; }
+
+label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted); }
+
+input[type="text"], input[type="password"], input[type="file"], select {
+  font: inherit;
+  color: var(--text);
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  min-width: 180px;
+}
+label input, label select { color: var(--text); font-size: 14px; min-width: 0; width: 100%; }
+input:focus, select:focus { outline: 2px solid rgba(47, 111, 235, .35); border-color: var(--primary); }
+
+.btn {
+  display: inline-block;
+  font: inherit;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+}
+.btn:hover { background: #f3f5f8; text-decoration: none; }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn.primary:hover { background: #2860d0; }
+.btn.danger { color: var(--danger); border-color: #f0c3bf; }
+.btn.danger:hover { background: #fdf0ef; }
+.btn.small { padding: 4px 10px; font-size: 12px; }
+
+/* ---------- 表格 ---------- */
+.table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.table th, .table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+.table th { color: var(--muted); font-weight: 500; font-size: 12px; }
+.table tbody tr:hover { background: #fafbfc; }
+.table td.key { max-width: 320px; word-break: break-all; }
+.table td.actions { white-space: nowrap; }
+.table td.actions > * { margin-right: 6px; }
+
+/* ---------- 元信息栅格 ---------- */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.meta-grid > div { display: flex; flex-direction: column; gap: 4px; }
+.meta-grid b { word-break: break-all; }
+
+/* ---------- 徽标 ---------- */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: #f0f2f5;
+  color: var(--muted);
+}
+.badge-hot { background: #fff1e6; color: #c2410c; }
+.badge-normal { background: #e8f3ff; color: #1d4ed8; }
+.badge-warn { background: #fdecec; color: var(--danger); }
+
+/* ---------- 提示条 ---------- */
+.flash {
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  background: #eef4ff;
+  color: #1d4ed8;
+}
+.flash.error { background: #fdecec; color: var(--danger); }
+.flash.ok { background: #e9f7ef; color: var(--ok); }
+
+/* ---------- 登录页 ---------- */
+.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-box {
+  width: 340px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 32px;
+}
+.login-box h1 { margin: 0 0 24px; font-size: 18px; text-align: center; }
+.login-box form { display: flex; flex-direction: column; gap: 16px; }
+.login-box button { width: 100%; }
+
+/* ---------- 弹窗 ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal.hidden { display: none; }
+.modal-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  min-width: 360px;
+  max-width: 640px;
+  max-height: 70vh;
+  overflow: auto;
+}
+.modal-box h3 { margin: 0 0 14px; font-size: 15px; }
+.modal-box .table { margin-top: 0; }

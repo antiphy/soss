@@ -1,0 +1,59 @@
+# soss 配置样例（design §70）
+# 生产默认：data.bin 初始 1GiB，剩余低于 500MiB 时自动 +1GiB。
+
+storage:
+  root: ./data/oss
+  data_file: data.bin
+  initial_size: 1GiB
+  expand_step: 1GiB
+  low_watermark: 500MiB
+  disk_safety_margin: 1GiB
+  # 写入后是否 fsync；关闭可提升吞吐，但崩溃时可能出现“元数据存在、数据未落盘”的风险。
+  fsync: true
+  # 读取时是否校验 CRC32C（默认关闭，保证读路径性能）
+  verify_on_read: false
+
+cache:
+  hot_max_bytes: 8GiB
+  lru_max_bytes: 2GiB
+  lru_max_objects: 500000
+
+sqlite:
+  database: oss.db
+  busy_timeout: 5000
+  synchronous: FULL
+
+server:
+  listen: 0.0.0.0:8080
+  max_object_size: 100MiB
+  cache_control_hot: "public, max-age=31536000, immutable"
+  cache_control_normal: "public, max-age=300"
+  read_timeout_sec: 60
+  write_timeout_sec: 300
+  idle_timeout_sec: 120
+  metrics_enabled: true
+
+logging:
+  level: info
+  lang: zh
+  # file: ./data/oss/soss.log
+
+auth:
+  # 对象写操作（PUT / DELETE）必须在 Authorization 头里带上 write_token 或 admin_token，
+  # 否则返回 403。留空 = 拒绝一切写入，请先改成自己的随机串。
+  admin_token: "change-me-admin-token"
+  write_token: "change-me-write-token"
+  # 对象读（GET / HEAD）匿名放行；read_token 现在只用于 /v1/metrics 之外的运营接口。
+  read_token: "change-me-read-token"
+  # 管理后台会话 Cookie 的签名密钥。留空时每次启动随机生成（重启后需重新登录）。
+  jwt_secret: ""
+  # 管理后台会话有效期（小时）。
+  session_hour: 12
+
+# 管理后台：http://<listen>/admin
+admin:
+  enabled: true
+  # pongo2 模板根目录（相对进程工作目录）
+  views_dir: views
+  # 静态资源目录，映射到 /static
+  static_dir: static
