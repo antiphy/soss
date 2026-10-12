@@ -126,46 +126,46 @@ type Config struct {
 
 // DefaultConfig 返回带默认值的配置。
 func DefaultConfig() *Config {
-	fsync := true
+	fsync := consts.DefaultStorageFsync
 	return &Config{
 		Storage: StorageConfig{
-			Root:             "./data/oss",
-			DataFile:         "data.bin",
-			InitialSize:      Size(1 << 30),
-			ExpandStep:       Size(1 << 30),
-			LowWatermark:     Size(500 << 20),
-			DiskSafetyMargin: Size(1 << 30),
+			Root:             consts.DefaultStorageRoot,
+			DataFile:         consts.DataFileName,
+			InitialSize:      Size(consts.DefaultStorageInitialSize),
+			ExpandStep:       Size(consts.DefaultStorageExpandStep),
+			LowWatermark:     Size(consts.DefaultStorageLowWatermark),
+			DiskSafetyMargin: Size(consts.DefaultStorageDiskSafetyMargin),
 			Fsync:            &fsync,
-			VerifyOnRead:     false,
+			VerifyOnRead:     consts.DefaultVerifyOnRead,
 		},
 		Cache: CacheConfig{
-			HotMaxBytes:   Size(8 << 30),
-			LRUMaxBytes:   Size(2 << 30),
-			LRUMaxObjects: 500000,
+			HotMaxBytes:   Size(consts.DefaultHotCacheMaxBytes),
+			LRUMaxBytes:   Size(consts.DefaultLRUMaxBytes),
+			LRUMaxObjects: consts.DefaultLRUMaxObjects,
 		},
 		SQLite: SQLiteConfig{
-			Database:    "oss.db",
-			BusyTimeout: 5000,
-			Synchronous: "FULL",
+			Database:    consts.SQLiteDBName,
+			BusyTimeout: consts.DefaultSQLiteBusyTimeout,
+			Synchronous: consts.DefaultSQLiteSynchronous,
 		},
 		Server: ServerConfig{
-			Listen:             "0.0.0.0:8080",
-			MaxObjectSize:      Size(100 << 20),
-			CacheControlHot:    "public, max-age=31536000, immutable",
-			CacheControlNormal: "public, max-age=300",
-			ReadTimeoutSec:     60,
-			WriteTimeoutSec:    300,
-			IdleTimeoutSec:     120,
-			MetricsEnabled:     true,
+			Listen:             consts.DefaultListenAddr,
+			MaxObjectSize:      Size(consts.DefaultMaxObjectSize),
+			CacheControlHot:    consts.DefaultCacheControlHot,
+			CacheControlNormal: consts.DefaultCacheControlNormal,
+			ReadTimeoutSec:     consts.DefaultReadTimeoutSec,
+			WriteTimeoutSec:    consts.DefaultWriteTimeoutSec,
+			IdleTimeoutSec:     consts.DefaultIdleTimeoutSec,
+			MetricsEnabled:     consts.DefaultMetricsEnabled,
 		},
 		Logging: LoggingConfig{
-			Level: "info",
-			Lang:  "en",
+			Level: consts.DefaultLogLevel,
+			Lang:  consts.DefaultLogLang,
 		},
 		Admin: AdminConfig{
-			Enabled:   true,
-			ViewsDir:  "views",
-			StaticDir: "static",
+			Enabled:   consts.DefaultAdminEnabled,
+			ViewsDir:  consts.DefaultViewsDir,
+			StaticDir: consts.DefaultStaticDir,
 		},
 	}
 }
@@ -194,77 +194,80 @@ func (c *Config) Validate() error {
 		return errors.New("storage.root is required")
 	}
 	if c.Storage.DataFile == "" {
-		c.Storage.DataFile = "data.bin"
+		c.Storage.DataFile = consts.DataFileName
 	}
 	if c.Storage.InitialSize <= 0 {
-		c.Storage.InitialSize = Size(1 << 30)
+		c.Storage.InitialSize = Size(consts.DefaultStorageInitialSize)
 	}
 	if c.Storage.ExpandStep <= 0 {
-		c.Storage.ExpandStep = Size(1 << 30)
+		c.Storage.ExpandStep = Size(consts.DefaultStorageExpandStep)
 	}
 	if c.Storage.LowWatermark <= 0 {
-		c.Storage.LowWatermark = Size(500 << 20)
+		c.Storage.LowWatermark = Size(consts.DefaultStorageLowWatermark)
 	}
 	if c.Storage.DiskSafetyMargin <= 0 {
-		c.Storage.DiskSafetyMargin = Size(1 << 30)
+		c.Storage.DiskSafetyMargin = Size(consts.DefaultStorageDiskSafetyMargin)
 	}
 	if c.Storage.Fsync == nil {
-		v := true
+		v := consts.DefaultStorageFsync
 		c.Storage.Fsync = &v
 	}
 	if c.Cache.HotMaxBytes <= 0 {
-		c.Cache.HotMaxBytes = Size(8 << 30)
+		c.Cache.HotMaxBytes = Size(consts.DefaultHotCacheMaxBytes)
 	}
 	if c.Cache.LRUMaxBytes <= 0 {
-		c.Cache.LRUMaxBytes = Size(2 << 30)
+		c.Cache.LRUMaxBytes = Size(consts.DefaultLRUMaxBytes)
 	}
 	if c.Cache.LRUMaxObjects <= 0 {
-		c.Cache.LRUMaxObjects = 500000
+		c.Cache.LRUMaxObjects = consts.DefaultLRUMaxObjects
 	}
 	if c.SQLite.Database == "" {
-		c.SQLite.Database = "oss.db"
+		c.SQLite.Database = consts.SQLiteDBName
 	}
 	if c.SQLite.BusyTimeout <= 0 {
-		c.SQLite.BusyTimeout = 5000
+		c.SQLite.BusyTimeout = consts.DefaultSQLiteBusyTimeout
 	}
 	switch c.SQLite.Synchronous {
 	case "":
-		c.SQLite.Synchronous = "FULL"
+		c.SQLite.Synchronous = consts.DefaultSQLiteSynchronous
 	case "FULL", "NORMAL", "OFF", "EXTRA":
 	default:
 		return fmt.Errorf("sqlite.synchronous must be one of FULL/NORMAL/EXTRA/OFF, got %q", c.SQLite.Synchronous)
 	}
 	if c.Server.Listen == "" {
-		c.Server.Listen = "0.0.0.0:8080"
+		c.Server.Listen = consts.DefaultListenAddr
 	}
 	if c.Server.MaxObjectSize <= 0 {
-		c.Server.MaxObjectSize = Size(100 << 20)
+		c.Server.MaxObjectSize = Size(consts.DefaultMaxObjectSize)
 	}
 	if c.Server.CacheControlHot == "" {
-		c.Server.CacheControlHot = "public, max-age=31536000, immutable"
+		c.Server.CacheControlHot = consts.DefaultCacheControlHot
 	}
 	if c.Server.CacheControlNormal == "" {
-		c.Server.CacheControlNormal = "public, max-age=300"
+		c.Server.CacheControlNormal = consts.DefaultCacheControlNormal
 	}
 	if c.Logging.Level == "" {
-		c.Logging.Level = "info"
+		c.Logging.Level = consts.DefaultLogLevel
+	}
+	if c.Logging.Lang == "" {
+		c.Logging.Lang = consts.DefaultLogLang
 	}
 	if c.Auth.SessionHour <= 0 {
 		c.Auth.SessionHour = consts.DefaultAdminSessionHour
 	}
 	// 未显式配置签名密钥时随机生成一个：宁可重启后会话失效，也不留默认密钥。
 	if c.Auth.JWTSecret == "" {
-		secret, err := randomSecret(32)
+		secret, err := randomSecret(consts.RandomSecretBytes)
 		if err != nil {
 			return err
 		}
 		c.Auth.JWTSecret = secret
 	}
 	if c.Admin.ViewsDir == "" {
-		c.Admin.ViewsDir = "views"
+		c.Admin.ViewsDir = consts.DefaultViewsDir
 	}
 	if c.Admin.StaticDir == "" {
-		c.Admin.StaticDir = "static"
+		c.Admin.StaticDir = consts.DefaultStaticDir
 	}
 	return nil
 }

@@ -1,18 +1,13 @@
 package consts
 
-// 应用级常量。
+// 应用级常量。配置项默认值见 consts/config.go。
 const (
 	AppName    = "soss"
 	AppVersion = "1.0.0"
-
-	// DefaultConfigPath 默认配置文件路径。
-	DefaultConfigPath = "config.yaml"
 )
 
-// 存储目录下的固定子目录 / 文件名。
+// 存储目录下的固定子目录 / 文件名（data.bin、oss.db 的默认值在 config.go）。
 const (
-	DataFileName    = "data.bin"
-	SQLiteDBName    = "oss.db"
 	LockDirName     = "lock"
 	LockFileName    = "writer.lock"
 	TmpDirName      = "tmp"
@@ -60,18 +55,10 @@ const (
 	AdminCookieName = "soss_admin"
 	// AdminCookiePath Cookie 生效路径，只跟随 /admin 下的请求。
 	AdminCookiePath = "/admin"
-	// DefaultAdminSessionHour 管理员会话默认有效期（小时）。
-	DefaultAdminSessionHour = 12
 	// MaxAdminListObjects 管理后台单次最多返回的对象条数。
 	MaxAdminListObjects = 500
 	// DefaultViewLang 模板语言目录（SKILL.md §2：views/<lang>/）。
 	DefaultViewLang = "zh"
-)
-
-// 默认缓存策略（设计文档 §56），可通过配置覆盖。
-const (
-	DefaultCacheControlHot    = "public, max-age=31536000, immutable"
-	DefaultCacheControlNormal = "public, max-age=300"
 )
 
 // 容量 Worker 与 warm-up 的默认节奏。
